@@ -96,7 +96,7 @@ export default function LoginScreen() {
         <View className="px-5" style={{ paddingBottom: Math.max(insets.bottom, 24) }}>
           <AuthPrimaryButton
             label="Login"
-            onPress={() => {}}
+            onPress={() => router.replace("/(verification)/driver-info")}
             disabled={!canContinue}
             className="mb-6 h-14 w-full rounded-full items-center justify-center"
           />

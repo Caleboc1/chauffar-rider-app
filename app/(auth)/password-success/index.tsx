@@ -22,7 +22,7 @@ export default function PasswordSuccessScreen() {
         <Text className="mt-10 text-center text-[24px] font-bold leading-8 text-white">
           Password changed{"\n"}successfully
         </Text>
-        <Text className="mt-4 text-center text-[14px] leading-6 text-[#B1B1B1]">
+        <Text className="mt-4 text-center text-[14px] leading-6 text-[#F3F3F3]">
           Password reset successfully. You can now log in.
         </Text>
       </View>
