@@ -59,7 +59,6 @@ export default function PasswordScreen() {
               value={password}
               onChangeText={setPassword}
               placeholder="Password"
-              error={showMismatch}
             />
 
             <AuthPasswordInput
@@ -67,7 +66,6 @@ export default function PasswordScreen() {
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               placeholder="Confirm Password"
-              error={showMismatch}
             />
           </View>
 

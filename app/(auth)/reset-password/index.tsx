@@ -5,11 +5,13 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 
 import { AuthBackButton } from "@/components/auth/auth-back-button";
 import { AuthPrimaryButton } from "@/components/auth/auth-primary-button";
@@ -19,6 +21,8 @@ export default function ResetPasswordScreen() {
   const insets = useSafeAreaInsets();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const canSubmit = password.length >= 6 && password === confirmPassword;
 
@@ -45,30 +49,54 @@ export default function ResetPasswordScreen() {
           <View style={styles.fieldGroup}>
             <View>
               <Text style={styles.label}>Password</Text>
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Password"
-                placeholderTextColor="#5C5C5C"
-                secureTextEntry
-                autoCorrect={false}
-                autoCapitalize="none"
-                style={styles.input}
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="Password"
+                  placeholderTextColor="#5C5C5C"
+                  secureTextEntry={!showPassword}
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                  style={styles.input}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIcon}
+                >
+                  <Ionicons
+                    name={showPassword ? "eye-off" : "eye"}
+                    size={22}
+                    color="#B1B1B1"
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
 
             <View>
               <Text style={styles.label}>Confirm Password</Text>
-              <TextInput
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                placeholder="Confirm Password"
-                placeholderTextColor="#5C5C5C"
-                secureTextEntry
-                autoCorrect={false}
-                autoCapitalize="none"
-                style={styles.input}
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  placeholder="Confirm Password"
+                  placeholderTextColor="#5C5C5C"
+                  secureTextEntry={!showConfirmPassword}
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                  style={styles.input}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={styles.eyeIcon}
+                >
+                  <Ionicons
+                    name={showConfirmPassword ? "eye-off" : "eye"}
+                    size={22}
+                    color="#B1B1B1"
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
@@ -123,6 +151,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 10,
   },
+  inputContainer: {
+    position: "relative",
+  },
   input: {
     height: 56,
     borderRadius: 16,
@@ -131,7 +162,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#161314",
     color: "#FFFFFF",
     paddingHorizontal: 16,
+    paddingRight: 48,
     fontSize: 16,
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
   },
   footer: {
     paddingHorizontal: 20,
