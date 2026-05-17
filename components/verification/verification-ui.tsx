@@ -40,6 +40,7 @@ type VerificationScreenProps = {
   children: ReactNode;
   nextLabel?: string;
   onNext?: () => void;
+  onNextDisabledPress?: () => void;
   nextDisabled?: boolean;
   showBackButton?: boolean;
   scrollEnabled?: boolean;
@@ -125,6 +126,7 @@ export function VerificationScreen({
   children,
   nextLabel = "Next",
   onNext,
+  onNextDisabledPress,
   nextDisabled = false,
   showBackButton = true,
   scrollEnabled = true,
@@ -174,7 +176,7 @@ export function VerificationScreen({
       >
         <AuthPrimaryButton
           label={nextLabel}
-          onPress={onNext ?? (() => {})}
+          onPress={nextDisabled ? onNextDisabledPress ?? (() => {}) : onNext ?? (() => {})}
           disabled={nextDisabled}
           className="h-[58px] w-full rounded-full items-center justify-center"
         />
@@ -710,12 +712,12 @@ function parseDateValue(value?: string) {
   return { year, month, day };
 }
 
-export function FaceCaptureFrame() {
+export function FaceCaptureFrame({ overlay = false }: { overlay?: boolean }) {
   const cornerBase = "absolute h-[84px] w-[84px] border-[#404040]";
 
   return (
-    <View className="mt-4 items-center">
-      <View className="relative h-[360px] w-full max-w-[312px]">
+    <View className={overlay ? "flex-1" : "mt-4 items-center"}>
+      <View className={overlay ? "relative h-full w-full" : "relative h-[360px] w-full max-w-[312px]"}>
         <View
           className={`${cornerBase} left-4 top-0 rounded-tl-[34px] border-l-[14px] border-t-[14px]`}
         />
@@ -728,6 +730,29 @@ export function FaceCaptureFrame() {
         <View
           className={`${cornerBase} bottom-0 right-4 rounded-br-[34px] border-b-[14px] border-r-[14px]`}
         />
+      </View>
+    </View>
+  );
+}
+
+export function FaceCaptureSuccess({
+  imageUri,
+}: {
+  imageUri?: string | null;
+}) {
+  return (
+    <View className="items-center px-3 pt-12">
+      <Text className="text-center text-[18px] font-semibold text-white">
+        Face Scan Successful <Text>🎉</Text>
+      </Text>
+      <Text className="mt-2 text-center text-[14px] leading-6 text-[#8A8A8A]">
+        Your face has been captured successfully.{"\n"}We&apos;re now verifying your identity.
+      </Text>
+
+      <View className="mt-12 h-[250px] w-[190px] overflow-hidden rounded-[26px] bg-[#141414]">
+        {imageUri ? (
+          <Image source={{ uri: imageUri }} className="h-full w-full" contentFit="cover" />
+        ) : null}
       </View>
     </View>
   );
