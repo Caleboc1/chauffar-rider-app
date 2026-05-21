@@ -68,6 +68,7 @@ export function DriverDestinationMap({
 }: DriverDestinationMapProps) {
   const [completedPointIndex, setCompletedPointIndex] = useState(0);
   const [driverHeading, setDriverHeading] = useState(0);
+  const [hasArrived, setHasArrived] = useState(false);
   const routeCoordinates = useMemo(() => request.destinationPreview.routeCoordinates, [request.destinationPreview.routeCoordinates]);
   const denseRouteCoordinates = useMemo(() => densifyRouteCoordinates(routeCoordinates), [routeCoordinates]);
   const animatedCoordinate = useRef(
@@ -105,10 +106,12 @@ export function DriverDestinationMap({
     currentHeadingRef.current = 0;
     setDriverHeading(0);
     setCompletedPointIndex(0);
+    setHasArrived(false);
     onProgressChange(0);
 
     const runStep = (pointIndex: number) => {
       if (cancelled || pointIndex >= denseRouteCoordinates.length - 1) {
+        setHasArrived(true);
         onProgressChange(1);
         onArrival();
         return;
@@ -191,9 +194,11 @@ export function DriverDestinationMap({
         >
           <DriverLocationMarker />
         </Marker.Animated>
-        <Marker coordinate={request.destinationPreview.destinationLocation} anchor={{ x: 0.5, y: 0.5 }} tracksViewChanges={false}>
-          <DestinationMapMarker />
-        </Marker>
+        {!hasArrived ? (
+          <Marker coordinate={request.destinationPreview.destinationLocation} anchor={{ x: 0.5, y: 0.5 }} tracksViewChanges={false}>
+            <DestinationMapMarker />
+          </Marker>
+        ) : null}
       </MapView>
 
       <View className="absolute" style={{ left: "53%", top: "55%" }}>

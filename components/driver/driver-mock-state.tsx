@@ -73,6 +73,7 @@ type DriverMockStateValue = {
   declineRequest: (requestId: string) => void;
   openAllRequests: () => void;
   closeIncomingCard: () => void;
+  cancelActiveRide: () => void;
   setFilter: (filter: "All ride" | "Regular ride" | "Multi-stop ride") => void;
   setFilterMenuOpen: (open: boolean) => void;
 };
@@ -304,6 +305,11 @@ export function DriverMockStateProvider({ children }: { children: ReactNode }) {
     setShowIncomingCard(false);
   }, []);
 
+  const cancelActiveRide = useCallback(() => {
+    setActiveRide(null);
+    router.replace("/(driver)/home-online");
+  }, []);
+
   const openAllRequests = useCallback(() => {
     setShowIncomingCard(false);
     setShowRequestBanner(requests.length > 1);
@@ -338,12 +344,14 @@ export function DriverMockStateProvider({ children }: { children: ReactNode }) {
       declineRequest,
       openAllRequests,
       closeIncomingCard,
+      cancelActiveRide,
       setFilter,
       setFilterMenuOpen,
     }),
     [
       acceptRequest,
       activeRide,
+      cancelActiveRide,
       closeIncomingCard,
       declineRequest,
       filter,

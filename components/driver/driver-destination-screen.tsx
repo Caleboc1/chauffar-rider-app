@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { PanResponder, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -10,6 +11,7 @@ import PickupTripConnector from "@/assets/svgIcons/PickupTripConnector";
 import PickupTripDestinationIcon from "@/assets/svgIcons/PickupTripDestinationIcon";
 import PickupTripOriginIcon from "@/assets/svgIcons/PickupTripOriginIcon";
 import RideCompletedIcon from "@/assets/svgIcons/RideCompletedIcon";
+import { DriverCancelModal } from "@/components/driver/driver-cancel-modal";
 import type { DriverRideRequest } from "@/components/driver/driver-mock-state";
 import { DriverDestinationMap } from "@/components/driver/driver-destination-map";
 
@@ -29,6 +31,7 @@ export function DriverDestinationScreen({ request }: DriverDestinationScreenProp
   const insets = useSafeAreaInsets();
   const [arrived, setArrived] = useState(false);
   const [showCompletedModal, setShowCompletedModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const collapsedHeight = 170;
   const expandedHeight = 640;
@@ -97,7 +100,17 @@ export function DriverDestinationScreen({ request }: DriverDestinationScreenProp
               <RoundIconButton icon="locate" />
             </View>
 
-            {showCompletedModal ? (
+            {showCancelModal ? (
+              <DriverCancelModal
+                onKeepRide={() => setShowCancelModal(false)}
+                onConfirmCancel={() => {
+                  setShowCancelModal(false);
+                  setShowCompletedModal(false);
+                  setSheetExpanded(false);
+                  router.replace("/(driver)/cancel-ride?from=destination");
+                }}
+              />
+            ) : showCompletedModal ? (
               <View
                 className="bg-[#111111] px-6 pt-4"
                 style={{
@@ -230,7 +243,11 @@ export function DriverDestinationScreen({ request }: DriverDestinationScreenProp
                         <View className="mt-5 border-b border-[#2C2C2C]" />
                       </View>
 
-                      <TouchableOpacity className="mt-6 self-start rounded-[14px] bg-[#2A1618] px-4 py-3">
+                      <TouchableOpacity
+                        activeOpacity={0.86}
+                        onPress={() => setShowCancelModal(true)}
+                        className="mt-6 self-start rounded-[14px] bg-[#2A1618] px-4 py-3"
+                      >
                         <Text className="text-[16px] text-[#FF5A5F]">Cancel Ride</Text>
                       </TouchableOpacity>
                     </ScrollView>

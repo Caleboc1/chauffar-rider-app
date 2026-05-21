@@ -10,6 +10,7 @@ import PickupHeaderIcon from "@/assets/svgIcons/PickupHeaderIcon";
 import PickupTripConnector from "@/assets/svgIcons/PickupTripConnector";
 import PickupTripDestinationIcon from "@/assets/svgIcons/PickupTripDestinationIcon";
 import PickupTripOriginIcon from "@/assets/svgIcons/PickupTripOriginIcon";
+import { DriverCancelModal } from "@/components/driver/driver-cancel-modal";
 import type { DriverRideRequest } from "@/components/driver/driver-mock-state";
 import { DriverPickupMap } from "@/components/driver/driver-pickup-map";
 
@@ -24,6 +25,7 @@ export function DriverPickupScreen({ request }: DriverPickupScreenProps) {
   const [waitingForPassenger, setWaitingForPassenger] = useState(false);
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const [waitSeconds, setWaitSeconds] = useState(120);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const dragStartRef = useRef(0);
   const sheetHeightRef = useRef(sheetExpanded ? 270 : 120);
   const [sheetExtraHeight, setSheetExtraHeight] = useState(sheetExpanded ? 270 : 120);
@@ -101,6 +103,13 @@ export function DriverPickupScreen({ request }: DriverPickupScreenProps) {
             <View className="mb-6 items-end">
               <RoundIconButton icon="locate" />
             </View>
+
+            {showCancelModal ? (
+              <DriverCancelModal
+                onKeepRide={() => setShowCancelModal(false)}
+                onConfirmCancel={() => router.replace("/(driver)/cancel-ride?from=pickup")}
+              />
+            ) : null}
 
             <View
               {...panResponder.panHandlers}
@@ -193,7 +202,11 @@ export function DriverPickupScreen({ request }: DriverPickupScreenProps) {
                     <View className="mt-5 border-b border-[#2C2C2C]" />
                   </View>
 
-                  <TouchableOpacity className="mt-6 self-start rounded-[14px] bg-[#2A1618] px-4 py-3">
+                  <TouchableOpacity
+                    activeOpacity={0.86}
+                    onPress={() => setShowCancelModal(true)}
+                    className="mt-6 self-start rounded-[14px] bg-[#2A1618] px-4 py-3"
+                  >
                     <Text className="text-[16px] text-[#FF5A5F]">Cancel Ride</Text>
                   </TouchableOpacity>
                 </>
