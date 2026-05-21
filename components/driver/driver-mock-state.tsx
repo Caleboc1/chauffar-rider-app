@@ -39,6 +39,22 @@ export type DriverRideRequest = {
       longitude: number;
     };
   };
+  destinationPreview: {
+    region: {
+      latitude: number;
+      longitude: number;
+      latitudeDelta: number;
+      longitudeDelta: number;
+    };
+    routeCoordinates: {
+      latitude: number;
+      longitude: number;
+    }[];
+    destinationLocation: {
+      latitude: number;
+      longitude: number;
+    };
+  };
 };
 
 type DriverMockStateValue = {
@@ -94,6 +110,24 @@ const REQUESTS: DriverRideRequest[] = [
       ],
       passengerLocation: { latitude: 6.5166, longitude: 3.3748 },
     },
+    destinationPreview: {
+      region: {
+        latitude: 6.5108,
+        longitude: 3.3879,
+        latitudeDelta: 0.0175,
+        longitudeDelta: 0.0155,
+      },
+      routeCoordinates: [
+        { latitude: 6.5166, longitude: 3.3748 },
+        { latitude: 6.5166, longitude: 3.3791 },
+        { latitude: 6.5134, longitude: 3.3791 },
+        { latitude: 6.5134, longitude: 3.3834 },
+        { latitude: 6.5104, longitude: 3.3834 },
+        { latitude: 6.5104, longitude: 3.3886 },
+        { latitude: 6.5079, longitude: 3.3886 },
+      ],
+      destinationLocation: { latitude: 6.5079, longitude: 3.3886 },
+    },
   },
   {
     id: "rq-2",
@@ -122,6 +156,22 @@ const REQUESTS: DriverRideRequest[] = [
       ],
       passengerLocation: { latitude: 6.5307, longitude: 3.3926 },
     },
+    destinationPreview: {
+      region: {
+        latitude: 6.5238,
+        longitude: 3.4017,
+        latitudeDelta: 0.018,
+        longitudeDelta: 0.016,
+      },
+      routeCoordinates: [
+        { latitude: 6.5307, longitude: 3.3926 },
+        { latitude: 6.5307, longitude: 3.3979 },
+        { latitude: 6.5262, longitude: 3.3979 },
+        { latitude: 6.5262, longitude: 3.4027 },
+        { latitude: 6.5213, longitude: 3.4027 },
+      ],
+      destinationLocation: { latitude: 6.5213, longitude: 3.4027 },
+    },
   },
   {
     id: "rq-3",
@@ -149,6 +199,22 @@ const REQUESTS: DriverRideRequest[] = [
         { latitude: 6.5014, longitude: 3.3913 },
       ],
       passengerLocation: { latitude: 6.5014, longitude: 3.3913 },
+    },
+    destinationPreview: {
+      region: {
+        latitude: 6.4959,
+        longitude: 3.4041,
+        latitudeDelta: 0.019,
+        longitudeDelta: 0.017,
+      },
+      routeCoordinates: [
+        { latitude: 6.5014, longitude: 3.3913 },
+        { latitude: 6.5014, longitude: 3.3971 },
+        { latitude: 6.4982, longitude: 3.3971 },
+        { latitude: 6.4982, longitude: 3.4048 },
+        { latitude: 6.4946, longitude: 3.4048 },
+      ],
+      destinationLocation: { latitude: 6.4946, longitude: 3.4048 },
     },
   },
 ];

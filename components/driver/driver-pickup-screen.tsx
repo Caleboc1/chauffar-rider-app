@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PanResponder, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -134,6 +135,9 @@ export function DriverPickupScreen({ request }: DriverPickupScreenProps) {
                     setWaitingForPassenger(true);
                     snapSheet(false);
                     return;
+                  }
+                  if (waitingForPassenger) {
+                    router.replace("/(driver)/destination");
                   }
                 }}
                 className={`mb-5 h-14 items-center justify-center rounded-full ${
