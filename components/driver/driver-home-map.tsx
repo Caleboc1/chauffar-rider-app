@@ -2,6 +2,8 @@ import { StyleSheet, View } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 import DriverLocationMarker from "@/assets/svgIcons/DriverLocationMarker";
+import PassengerMarker from "@/assets/svgIcons/PassengerMarker";
+import { useDriverMockState } from "@/components/driver/driver-mock-state";
 import { rideMapStyle } from "@/theme/ride-map-style";
 
 const INITIAL_REGION = {
@@ -17,6 +19,8 @@ const DRIVER_LOCATION = {
 };
 
 export function DriverHomeMap() {
+  const { isOnline, requests } = useDriverMockState();
+
   return (
     <View style={StyleSheet.absoluteFill}>
       <MapView
@@ -35,6 +39,19 @@ export function DriverHomeMap() {
         <Marker coordinate={DRIVER_LOCATION} anchor={{ x: 0.5, y: 0.5 }} tracksViewChanges={false}>
           <DriverLocationMarker />
         </Marker>
+
+        {isOnline
+          ? requests.map((request) => (
+              <Marker
+                key={request.id}
+                coordinate={request.marker}
+                anchor={{ x: 0.5, y: 0.5 }}
+                tracksViewChanges={false}
+              >
+                <PassengerMarker />
+              </Marker>
+            ))
+          : null}
       </MapView>
     </View>
   );

@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -14,6 +13,8 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 
 import SliderChevronIcon from "@/assets/svgIcons/SliderChevronIcon";
 import { DriverHomeMap } from "@/components/driver/driver-home-map";
+import { useDriverMockState } from "@/components/driver/driver-mock-state";
+import { DriverRideRequestCard } from "@/components/driver/driver-ride-request-card";
 
 type DriverHomeMode = "offline" | "online" | "stats";
 
@@ -32,6 +33,15 @@ export function DriverHomeScreen({ mode }: DriverHomeScreenProps) {
   const isOffline = mode === "offline";
   const isExpandedOnline = mode === "stats";
   const bottomSheetPadding = Math.max(insets.bottom + 14, 22);
+  const {
+    requests,
+    highlightedRequest,
+    showIncomingCard,
+    showRequestBanner,
+    acceptRequest,
+    declineRequest,
+    openAllRequests,
+  } = useDriverMockState();
 
   return (
     <View className="flex-1 bg-[#0B0B0B]">
@@ -40,6 +50,50 @@ export function DriverHomeScreen({ mode }: DriverHomeScreenProps) {
 
       <SafeAreaView className="flex-1" edges={["top"]} pointerEvents="box-none">
         <View className="flex-1 px-5 pt-2" pointerEvents="box-none">
+          {showIncomingCard && highlightedRequest ? (
+            <View pointerEvents="box-none" style={styles.topOverlay}>
+              <DriverRideRequestCard
+                request={highlightedRequest}
+                onAccept={() => acceptRequest(highlightedRequest.id)}
+                onDecline={() => declineRequest(highlightedRequest.id)}
+              />
+            </View>
+          ) : null}
+
+          {showRequestBanner && requests.length > 1 ? (
+            <TouchableOpacity
+              activeOpacity={0.86}
+              onPress={openAllRequests}
+              className="mb-4 rounded-[18px] bg-[#171515] px-4 py-3"
+            >
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center">
+                  <View className="mr-3 flex-row">
+                    <View className="z-0 h-9 w-9 items-center justify-center rounded-full bg-[#7A3B24]">
+                      <Text className="text-[18px]">👩🏽</Text>
+                    </View>
+                    <View className="ml-[-10px] z-10 h-9 w-9 items-center justify-center rounded-full bg-[#7A3B24]">
+                      <Text className="text-[18px]">👨🏽</Text>
+                    </View>
+                    <View className="ml-[-10px] z-20 h-9 w-9 items-center justify-center rounded-full bg-[#2E73FF]">
+                      <Text className="text-[14px] font-semibold text-white">+2</Text>
+                    </View>
+                  </View>
+
+                  <View className="flex-row items-center">
+                    <View className="mr-3 h-2.5 w-2.5 rounded-full bg-[#0DFF85]" />
+                    <Text className="text-[16px] font-medium text-white">Incoming ride requests</Text>
+                  </View>
+                </View>
+
+                <View className="flex-row items-center">
+                  <Text className="mr-1 text-[14px] font-medium text-[#0DFF85]">View all</Text>
+                  <Ionicons name="arrow-forward" size={16} color="#0DFF85" />
+                </View>
+              </View>
+            </TouchableOpacity>
+          ) : null}
+
           <View className="flex-row items-center justify-between" pointerEvents="box-none">
             <RoundIconButton icon="menu" onPress={() => {}} />
             {isOffline ? <View className="h-12" /> : <AvailabilityChip label="Available" tone="neutral" />}
@@ -258,6 +312,7 @@ function SheetHandle() {
 }
 
 function GoOnlineSlider() {
+  const { goOnline } = useDriverMockState();
   const knobSize = 72;
   const horizontalPadding = 8;
   const [trackWidth, setTrackWidth] = useState(0);
@@ -301,7 +356,7 @@ function GoOnlineSlider() {
 
         if (shouldComplete) {
           updatePosition(maxTranslate);
-          router.replace("/(driver)/home-online");
+          goOnline();
           return;
         }
 
@@ -361,6 +416,13 @@ function GoOnlineSlider() {
 }
 
 const styles = StyleSheet.create({
+  topOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 20,
+  },
   sliderTrack: {
     padding: 8,
     position: "relative",
