@@ -11,6 +11,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(verification)" />
+        <Stack.Screen name="(driver)" />
       </Stack>
       <StatusBar style="light" />
     </GestureHandlerRootView>
