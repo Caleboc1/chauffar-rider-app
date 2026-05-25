@@ -1,7 +1,11 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+import { Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
+import RatingStarFilledIcon from "@/assets/svgIcons/RatingStarFilledIcon";
+import RatingStarOutlineIcon from "@/assets/svgIcons/RatingStarOutlineIcon";
 import TripSummaryDownloadIcon from "@/assets/svgIcons/TripSummaryDownloadIcon";
 import TripSummaryGiveRatingIcon from "@/assets/svgIcons/TripSummaryGiveRatingIcon";
 import {
@@ -17,6 +21,9 @@ export function DriverTripSummaryScreen() {
   const insets = useSafeAreaInsets();
   const { activeRide, completeActiveRide } = useDriverMockState();
   const params = useLocalSearchParams<{ paymentMethod?: string }>();
+  const [showRatingSheet, setShowRatingSheet] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
 
   if (!activeRide) {
     return null;
@@ -97,7 +104,11 @@ export function DriverTripSummaryScreen() {
           </ScrollView>
 
           <View className="flex-row pb-6 pt-4" style={{ paddingBottom: insets.bottom + 6 }}>
-            <TouchableOpacity activeOpacity={0.84} className="mr-3 h-14 flex-1 flex-row items-center justify-center rounded-full bg-[#343434]">
+            <TouchableOpacity
+              activeOpacity={0.84}
+              onPress={() => setShowRatingSheet(true)}
+              className="mr-3 h-14 flex-1 flex-row items-center justify-center rounded-full bg-[#343434]"
+            >
               <Text className="text-[17px] font-medium text-white">Give rating</Text>
               <View className="ml-2.5">
                 <TripSummaryGiveRatingIcon />
@@ -122,6 +133,70 @@ export function DriverTripSummaryScreen() {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
+
+      <Modal
+        visible={showRatingSheet}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowRatingSheet(false)}
+      >
+        <View className="flex-1 justify-end bg-black/70">
+          <TouchableOpacity className="flex-1" activeOpacity={1} onPress={() => setShowRatingSheet(false)} />
+
+          <View
+            className="rounded-t-[28px] bg-[#090909] px-5 pt-3"
+            style={{ paddingBottom: Math.max(insets.bottom + 24, 30) }}
+          >
+            <View className="mb-8 items-center">
+              <View className="h-1 w-14 rounded-full bg-white" />
+            </View>
+
+            <View className="items-center">
+              <View className="h-[82px] w-[82px] items-center justify-center rounded-full border border-[#DFDFDF] bg-white">
+                <Ionicons name="thumbs-up" size={38} color="#AEB7C0" />
+              </View>
+
+              <Text className="mt-8 text-center text-[21px] font-semibold text-white">Share Your Ride Experience</Text>
+              <Text className="mt-3 max-w-[290px] text-center text-[15px] leading-7 text-[#C3C3C3]">
+                A quick rating helps us reward great riders and identify any issues
+              </Text>
+
+              <View className="mt-6 flex-row">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <TouchableOpacity
+                    key={star}
+                    activeOpacity={0.85}
+                    onPress={() => setRating(star)}
+                    className={star === 1 ? "" : "ml-3"}
+                  >
+                    {star <= rating ? <RatingStarFilledIcon /> : <RatingStarOutlineIcon />}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <TextInput
+              value={review}
+              onChangeText={setReview}
+              placeholder="Share your experience"
+              placeholderTextColor="#7A7A7A"
+              multiline
+              textAlignVertical="top"
+              className="mt-8 min-h-[184px] rounded-[16px] bg-[#171717] px-4 py-4 text-[16px] text-white"
+            />
+
+            <Text className="mt-3 text-[14px] text-[#8D8D8D]">Your review will be private and anonymous</Text>
+
+            <TouchableOpacity
+              activeOpacity={0.86}
+              onPress={() => setShowRatingSheet(false)}
+              className="mt-12 h-14 items-center justify-center rounded-full bg-[#12FF98]"
+            >
+              <Text className="text-[18px] font-medium text-[#040404]">Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
