@@ -13,6 +13,8 @@ import PickupTripOriginIcon from "@/assets/svgIcons/PickupTripOriginIcon";
 import { DriverCancelModal } from "@/components/driver/driver-cancel-modal";
 import type { DriverRideRequest } from "@/components/driver/driver-mock-state";
 import { DriverPickupMap } from "@/components/driver/driver-pickup-map";
+import { DriverSideDrawer } from "@/components/driver/driver-side-drawer";
+import { useDriverNotificationsNavigation } from "@/components/driver/use-driver-notifications";
 
 type DriverPickupScreenProps = {
   request: DriverRideRequest;
@@ -20,6 +22,8 @@ type DriverPickupScreenProps = {
 
 export function DriverPickupScreen({ request }: DriverPickupScreenProps) {
   const insets = useSafeAreaInsets();
+  const [showDrawer, setShowDrawer] = useState(false);
+  const { openNotifications } = useDriverNotificationsNavigation();
   const [progress, setProgress] = useState(0);
   const [hasArrived, setHasArrived] = useState(false);
   const [waitingForPassenger, setWaitingForPassenger] = useState(false);
@@ -90,13 +94,14 @@ export function DriverPickupScreen({ request }: DriverPickupScreenProps) {
         onArrival={handleArrival}
         onProgressChange={handleProgressChange}
       />
+      <DriverSideDrawer visible={showDrawer} onClose={() => setShowDrawer(false)} />
 
       <SafeAreaView className="flex-1" edges={["top"]} pointerEvents="box-none">
         <View className="flex-1 px-5 pt-2" pointerEvents="box-none">
           <View className="flex-row items-center justify-between">
-            <RoundIconButton icon="menu" />
+            <RoundIconButton icon="menu" onPress={() => setShowDrawer(true)} />
             <AvailabilityChip />
-            <RoundIconButton icon="notifications" />
+            <RoundIconButton icon="notifications" onPress={openNotifications} />
           </View>
 
           <View className="flex-1 justify-end" pointerEvents="box-none">
@@ -219,9 +224,19 @@ export function DriverPickupScreen({ request }: DriverPickupScreenProps) {
   );
 }
 
-function RoundIconButton({ icon }: { icon: keyof typeof Ionicons.glyphMap }) {
+function RoundIconButton({
+  icon,
+  onPress,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  onPress?: () => void;
+}) {
   return (
-    <TouchableOpacity activeOpacity={0.82} className="h-12 w-12 items-center justify-center rounded-full bg-[#2A2A2A]">
+    <TouchableOpacity
+      activeOpacity={0.82}
+      onPress={onPress}
+      className="h-12 w-12 items-center justify-center rounded-full bg-[#2A2A2A]"
+    >
       <Ionicons name={icon} size={24} color="#FFFFFF" />
     </TouchableOpacity>
   );

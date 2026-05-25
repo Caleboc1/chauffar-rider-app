@@ -67,6 +67,8 @@ type DriverMockStateValue = {
   filter: "All ride" | "Regular ride" | "Multi-stop ride";
   filterMenuOpen: boolean;
   visibleRequests: DriverRideRequest[];
+  notificationsEnabled: boolean;
+  notificationsPromptSeen: boolean;
   goOnline: () => void;
   goOffline: () => void;
   acceptRequest: (requestId: string) => void;
@@ -75,6 +77,8 @@ type DriverMockStateValue = {
   closeIncomingCard: () => void;
   cancelActiveRide: () => void;
   completeActiveRide: () => void;
+  enableNotifications: () => void;
+  dismissNotificationsPrompt: () => void;
   setFilter: (filter: "All ride" | "Regular ride" | "Multi-stop ride") => void;
   setFilterMenuOpen: (open: boolean) => void;
 };
@@ -231,6 +235,8 @@ export function DriverMockStateProvider({ children }: { children: ReactNode }) {
   const [showRequestBanner, setShowRequestBanner] = useState(false);
   const [filter, setFilter] = useState<"All ride" | "Regular ride" | "Multi-stop ride">("All ride");
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [notificationsPromptSeen, setNotificationsPromptSeen] = useState(false);
   const firstTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const batchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -316,6 +322,15 @@ export function DriverMockStateProvider({ children }: { children: ReactNode }) {
     router.replace("/(driver)/home-online");
   }, []);
 
+  const enableNotifications = useCallback(() => {
+    setNotificationsEnabled(true);
+    setNotificationsPromptSeen(true);
+  }, []);
+
+  const dismissNotificationsPrompt = useCallback(() => {
+    setNotificationsPromptSeen(true);
+  }, []);
+
   const openAllRequests = useCallback(() => {
     setShowIncomingCard(false);
     setShowRequestBanner(requests.length > 1);
@@ -344,6 +359,8 @@ export function DriverMockStateProvider({ children }: { children: ReactNode }) {
       filter,
       filterMenuOpen,
       visibleRequests,
+      notificationsEnabled,
+      notificationsPromptSeen,
       goOnline,
       goOffline,
       acceptRequest,
@@ -352,6 +369,8 @@ export function DriverMockStateProvider({ children }: { children: ReactNode }) {
       closeIncomingCard,
       cancelActiveRide,
       completeActiveRide,
+      enableNotifications,
+      dismissNotificationsPrompt,
       setFilter,
       setFilterMenuOpen,
     }),
@@ -361,13 +380,17 @@ export function DriverMockStateProvider({ children }: { children: ReactNode }) {
       cancelActiveRide,
       closeIncomingCard,
       completeActiveRide,
+      dismissNotificationsPrompt,
       declineRequest,
+      enableNotifications,
       filter,
       filterMenuOpen,
       goOffline,
       goOnline,
       highlightedRequest,
       isOnline,
+      notificationsEnabled,
+      notificationsPromptSeen,
       openAllRequests,
       requests,
       showIncomingCard,

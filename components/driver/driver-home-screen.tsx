@@ -15,6 +15,8 @@ import SliderChevronIcon from "@/assets/svgIcons/SliderChevronIcon";
 import { DriverHomeMap } from "@/components/driver/driver-home-map";
 import { useDriverMockState } from "@/components/driver/driver-mock-state";
 import { DriverRideRequestCard } from "@/components/driver/driver-ride-request-card";
+import { DriverSideDrawer } from "@/components/driver/driver-side-drawer";
+import { useDriverNotificationsNavigation } from "@/components/driver/use-driver-notifications";
 
 type DriverHomeMode = "offline" | "online" | "stats";
 
@@ -30,6 +32,8 @@ const summaryItems = [
 
 export function DriverHomeScreen({ mode }: DriverHomeScreenProps) {
   const insets = useSafeAreaInsets();
+  const [showDrawer, setShowDrawer] = useState(false);
+  const { openNotifications } = useDriverNotificationsNavigation();
   const isOffline = mode === "offline";
   const isExpandedOnline = mode === "stats";
   const bottomSheetPadding = Math.max(insets.bottom + 14, 22);
@@ -47,6 +51,7 @@ export function DriverHomeScreen({ mode }: DriverHomeScreenProps) {
     <View className="flex-1 bg-[#0B0B0B]">
       <StatusBar style="light" />
       <DriverHomeMap />
+      <DriverSideDrawer visible={showDrawer} onClose={() => setShowDrawer(false)} />
 
       <SafeAreaView className="flex-1" edges={["top"]} pointerEvents="box-none">
         <View className="flex-1 px-5 pt-2" pointerEvents="box-none">
@@ -95,9 +100,9 @@ export function DriverHomeScreen({ mode }: DriverHomeScreenProps) {
           ) : null}
 
           <View className="flex-row items-center justify-between" pointerEvents="box-none">
-            <RoundIconButton icon="menu" onPress={() => {}} />
+            <RoundIconButton icon="menu" onPress={() => setShowDrawer(true)} />
             {isOffline ? <View className="h-12" /> : <AvailabilityChip label="Available" tone="neutral" />}
-            <RoundIconButton icon="notifications" onPress={() => {}} />
+            <RoundIconButton icon="notifications" onPress={openNotifications} />
           </View>
 
           <View className="flex-1 justify-end" pointerEvents="box-none">
