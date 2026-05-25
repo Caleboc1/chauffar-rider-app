@@ -130,7 +130,14 @@ export function DriverDestinationScreen({ request }: DriverDestinationScreenProp
                     You&apos;ve successfully reached the destination. Confirm the rider&apos;s payment to finish this trip.
                   </Text>
                 </View>
-                <TouchableOpacity activeOpacity={0.86} className="mt-10 h-14 items-center justify-center rounded-full bg-[#0DFF85]">
+                <TouchableOpacity
+                  activeOpacity={0.86}
+                  onPress={() => {
+                    setShowCompletedModal(false);
+                    router.push("/(driver)/confirm-payment" as never);
+                  }}
+                  className="mt-10 h-14 items-center justify-center rounded-full bg-[#0DFF85]"
+                >
                   <Text className="text-[18px] font-semibold text-[#050505]">Proceed to Confirm Payment</Text>
                 </TouchableOpacity>
               </View>
@@ -238,7 +245,7 @@ export function DriverDestinationScreen({ request }: DriverDestinationScreenProp
                             </View>
                             <Text className="text-[18px] font-semibold text-white">Cash</Text>
                           </View>
-                          <Text className="text-[18px] font-bold text-white">N2,600</Text>
+                          <Text className="text-[18px] font-bold text-white">{request.fare}</Text>
                         </View>
                         <View className="mt-5 border-b border-[#2C2C2C]" />
                       </View>
