@@ -231,10 +231,23 @@ export function DriverDestinationScreen({ request }: DriverDestinationScreenProp
                           <Text className="text-[20px]">🧔🏽</Text>
                         </View>
                         <Text className="flex-1 text-[18px] font-medium text-white">{request.riderName}</Text>
-                        <TouchableOpacity className="mr-3 h-12 w-12 items-center justify-center rounded-full bg-[#252525]">
+                        <TouchableOpacity
+                          activeOpacity={0.85}
+                          onPress={() => router.push("/(driver)/call" as never)}
+                          className="mr-3 h-12 w-12 items-center justify-center rounded-full bg-[#252525]"
+                        >
                           <Ionicons name="call" size={20} color="#0DFF85" />
                         </TouchableOpacity>
-                        <TouchableOpacity className="h-12 w-12 items-center justify-center rounded-full bg-[#252525]">
+                        <TouchableOpacity
+                          activeOpacity={0.85}
+                          onPress={() =>
+                            router.push({
+                              pathname: "/(driver)/chat" as never,
+                              params: { mode: "active" },
+                            })
+                          }
+                          className="h-12 w-12 items-center justify-center rounded-full bg-[#252525]"
+                        >
                           <Ionicons name="chatbubble" size={18} color="#0DFF85" />
                         </TouchableOpacity>
                       </View>
