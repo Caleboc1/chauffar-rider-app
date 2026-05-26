@@ -58,6 +58,11 @@ export function DriverSideDrawer({ visible, onClose }: DriverSideDrawerProps) {
 
     if (action === "notifications") {
       openNotifications();
+      return;
+    }
+
+    if (action === "settings") {
+      router.push("/(driver)/settings");
     }
   };
 

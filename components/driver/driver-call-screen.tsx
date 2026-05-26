@@ -40,16 +40,7 @@ export function DriverCallScreen() {
           <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
         </TouchableOpacity>
 
-        <View className="mt-5 flex-row items-center rounded-[18px] border border-[#3A4A42] px-4 py-4">
-          <View className="flex-1">
-            <Text className="text-[18px] font-semibold tracking-[1px] text-white">AS23XZ</Text>
-            <Text className="mt-1 text-[16px] text-[#B1B1B1]">Toyota Camry  •  Blue</Text>
-          </View>
-
-          <View className="items-center justify-center">
-            <DriverCar size={88} />
-          </View>
-        </View>
+       
 
         <View className="flex-1 items-center justify-center">
           <View className="overflow-hidden rounded-full">
