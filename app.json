@@ -38,6 +38,12 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Chauffar uses your contacts so you can choose trusted emergency contacts for SOS alerts."
+        }
       ]
     ],
     "experiments": {

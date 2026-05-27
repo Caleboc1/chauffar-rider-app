@@ -720,9 +720,13 @@ function SettingsHomeScreen() {
               },
               {
                 icon: SettingsEmergencyIcon,
-                label: "Emergency/SOS",
-                onPress: () =>
-                  Alert.alert("Emergency/SOS", "The Emergency/SOS flow was not included in the provided settings designs."),
+                label: "Emergency Contacts",
+                onPress: () => router.push("/(driver)/settings-emergency-contacts"),
+              },
+              {
+                icon: SettingsEmergencyIcon,
+                label: "Emergency SOS",
+                onPress: () => router.push("/(driver)/settings-emergency-sos"),
               },
             ]}
           />
