@@ -2,8 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
-import { useState, type ReactNode } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -22,6 +22,7 @@ import Svg, { Path } from "react-native-svg";
 import { AuthBackButton } from "@/components/auth/auth-back-button";
 import { AuthPrimaryButton } from "@/components/auth/auth-primary-button";
 import { UploadCard as VerificationUploadCard } from "@/components/verification/verification-ui";
+import { AUTH_GREEN } from "@/features/auth/constants";
 
 const SETTINGS_AVATAR = require("@/assets/images/avatar.png");
 
@@ -377,6 +378,147 @@ export function DriverSettingsChangePasswordScreen() {
   );
 }
 
+export function DriverSettingsTransactionPinScreen() {
+  const inputRef = useRef<TextInput>(null);
+  const [step, setStep] = useState<"create" | "confirm">("create");
+  const [pin, setPin] = useState("");
+  const [createdPin, setCreatedPin] = useState("");
+  const [error, setError] = useState("");
+
+  const isConfirmStep = step === "confirm";
+  const canContinue = pin.length === 4;
+
+  useEffect(() => {
+    const focusTimer = setTimeout(() => inputRef.current?.focus(), 250);
+
+    return () => clearTimeout(focusTimer);
+  }, [step]);
+
+  const handleChangePin = (value: string) => {
+    setError("");
+    setPin(value.replace(/\D/g, "").slice(0, 4));
+  };
+
+  const handleSubmitPin = () => {
+    if (!canContinue) {
+      inputRef.current?.focus();
+      return;
+    }
+
+    if (!isConfirmStep) {
+      setCreatedPin(pin);
+      setPin("");
+      setStep("confirm");
+      return;
+    }
+
+    if (pin !== createdPin) {
+      setError("PINs do not match. Try again.");
+      setPin("");
+      return;
+    }
+
+    router.replace({
+      pathname: "/(driver)/settings",
+      params: { transactionPinSet: "1" },
+    });
+  };
+
+  return (
+    <View className="flex-1" style={{ backgroundColor: BG }}>
+      <StatusBar style="light" />
+      <SafeAreaView className="flex-1">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          className="flex-1"
+        >
+          <Pressable
+            className="flex-1 px-5"
+            onPress={() => inputRef.current?.focus()}
+          >
+            <TouchableOpacity
+              activeOpacity={0.82}
+              onPress={() => router.back()}
+              className="mt-5 h-10 w-10 items-start justify-center"
+            >
+              <Ionicons name="arrow-back" size={25} color="#FFFFFF" />
+            </TouchableOpacity>
+
+            <View className="mt-7">
+              <Text className="text-[29px] font-bold leading-[36px] text-white">
+                {isConfirmStep ? "Confirm 4-Digit PIN" : "Create your 4-Digit PIN"}
+              </Text>
+              <Text className="mt-3 max-w-[320px] text-[16px] leading-[23px] text-[#C5C5C5]">
+                {isConfirmStep
+                  ? "Re-type your PIN to authorize your transactions"
+                  : "Create a 4-digit for your transactions"}
+              </Text>
+            </View>
+
+            <View className="mt-[66px] items-center">
+              <View className="flex-row gap-3">
+                {Array.from({ length: 4 }).map((_, index) => {
+                  const isFilled = index < pin.length;
+
+                  return (
+                    <View
+                      key={index}
+                      className="h-[50px] w-[50px] items-center justify-center rounded-[3px]"
+                      style={{
+                        backgroundColor: isConfirmStep || isFilled ? SURFACE : "transparent",
+                        borderWidth: isConfirmStep || isFilled ? 0 : 1,
+                        borderColor: "#3F3F3F",
+                      }}
+                    >
+                      {isFilled ? (
+                        <Text className="text-[20px] font-semibold text-white">*</Text>
+                      ) : null}
+                    </View>
+                  );
+                })}
+              </View>
+
+              {error ? (
+                <Text className="mt-5 text-center text-[14px] font-medium text-[#FF5C5C]">
+                  {error}
+                </Text>
+              ) : null}
+            </View>
+
+            <TextInput
+              ref={inputRef}
+              value={pin}
+              onChangeText={handleChangePin}
+              keyboardType="number-pad"
+              textContentType="oneTimeCode"
+              maxLength={4}
+              caretHidden
+              className="absolute h-px w-px opacity-0"
+              style={{ left: 0, top: 0 }}
+            />
+
+            <View className="mt-auto pb-[54px]">
+              <TouchableOpacity
+                activeOpacity={0.84}
+                onPress={handleSubmitPin}
+                disabled={!canContinue}
+                className="h-[58px] items-center justify-center rounded-full"
+                style={{
+                  backgroundColor: canContinue ? AUTH_GREEN : "#24583A",
+                }}
+              >
+                <Text className="text-[16px] font-medium text-[#060B08]">
+                  {isConfirmStep ? "Confirm" : "Next"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </View>
+  );
+}
+
 export function DriverSettingsHelpSupportScreen() {
   return (
     <SettingsCenteredScreen title="Help & Support">
@@ -640,6 +782,19 @@ function SettingsStackedScreen({
 
 function SettingsHomeScreen() {
   const insets = useSafeAreaInsets();
+  const { transactionPinSet } = useLocalSearchParams<{ transactionPinSet?: string }>();
+  const [showSuccessToast, setShowSuccessToast] = useState(transactionPinSet === "1");
+
+  useEffect(() => {
+    if (transactionPinSet !== "1") {
+      return;
+    }
+
+    setShowSuccessToast(true);
+    const hideTimer = setTimeout(() => setShowSuccessToast(false), 2600);
+
+    return () => clearTimeout(hideTimer);
+  }, [transactionPinSet]);
 
   return (
     <View className="flex-1" style={{ backgroundColor: BG }}>
@@ -703,8 +858,7 @@ function SettingsHomeScreen() {
               {
                 icon: SettingsTransactionPinIcon,
                 label: "Set transaction pin",
-                onPress: () =>
-                  Alert.alert("Set transaction pin", "The transaction pin flow is not part of the provided designs yet."),
+                onPress: () => router.push("/(driver)/settings-transaction-pin"),
               },
             ]}
           />
@@ -763,6 +917,34 @@ function SettingsHomeScreen() {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
+
+      {showSuccessToast ? (
+        <View
+          pointerEvents="none"
+          className="absolute left-4 right-4 z-20 rounded-2xl px-4 py-4 shadow-lg"
+          style={{
+            top: Math.max(insets.top + 10, 22),
+            backgroundColor: "#18251E",
+            borderWidth: 1,
+            borderColor: AUTH_GREEN,
+          }}
+        >
+          <View className="flex-row items-center">
+            <View
+              className="mr-3 h-8 w-8 items-center justify-center rounded-full"
+              style={{ backgroundColor: AUTH_GREEN }}
+            >
+              <Ionicons name="checkmark" size={20} color="#07110C" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-[15px] font-semibold text-white">Transaction PIN set</Text>
+              <Text className="mt-1 text-[13px] text-[#C7C7C7]">
+                Your transaction PIN has been saved.
+              </Text>
+            </View>
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 }
