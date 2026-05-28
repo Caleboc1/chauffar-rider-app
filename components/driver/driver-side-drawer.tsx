@@ -61,6 +61,16 @@ export function DriverSideDrawer({ visible, onClose }: DriverSideDrawerProps) {
       return;
     }
 
+    if (action === "earning") {
+      router.push("/(driver)/earning");
+      return;
+    }
+
+    if (action === "history") {
+      router.push("/(driver)/ride-history");
+      return;
+    }
+
     if (action === "settings") {
       router.push("/(driver)/settings");
     }
